@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aquanex – Customer app & Service centre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#12303A; --ink-2:#4A6570; --ink-3:#7F97A0;
+  --paper:#F3F8F8; --surface:#FFFFFF; --surface-2:#E7F0F1; --line:#D3E2E4;
+  --deep:#0B4A5C; --deep-2:#0E6278; --mist:#D8EEF2;
+  --safe:#168A5E; --safe-bg:#DDF3E9;
+  --warn:#B97908; --warn-bg:#FBEFD5;
+  --bad:#C63A28; --bad-bg:#FBE1DC;
+  --off:#6B7B82; --off-bg:#E6EBED;
+  --radius-lg:22px; --radius:14px; --radius-sm:9px;
+  --font:"Lexend", "Noto Sans Devanagari", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#E4F1F3; --ink-2:#A9C2C8; --ink-3:#7C959C;
+    --paper:#0D1E24; --surface:#13292F; --surface-2:#1A353C; --line:#264850;
+    --deep:#7ED0E0; --deep-2:#9ADDE9; --mist:#1B3B43;
+    --safe:#4CCB93; --safe-bg:#143A2C; --warn:#F0B544; --warn-bg:#3A2E12;
+    --bad:#FF7C68; --bad-bg:#43201A; --off:#98A8AE; --off-bg:#243338;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#E4F1F3; --ink-2:#A9C2C8; --ink-3:#7C959C;
+  --paper:#0D1E24; --surface:#13292F; --surface-2:#1A353C; --line:#264850;
+  --deep:#7ED0E0; --deep-2:#9ADDE9; --mist:#1B3B43;
+  --safe:#4CCB93; --safe-bg:#143A2C; --warn:#F0B544; --warn-bg:#3A2E12;
+  --bad:#FF7C68; --bad-bg:#43201A; --off:#98A8AE; --off-bg:#243338;
+  color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:var(--paper);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,select,textarea,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--deep-2);outline-offset:2px;border-radius:6px}
+img,svg{max-width:100%}
+h1,h2,h3,p{margin:0}
+
+/* ---------- top bar ---------- */
+.topbar{display:flex;align-items:center;gap:14px;padding:14px 22px;max-width:1440px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:19px;letter-spacing:.2px}
+.brand svg{width:30px;height:30px}
+.brand small{display:block;font-weight:400;font-size:12px;color:var(--ink-2)}
+.seg{margin-left:auto;display:none;background:var(--surface-2);border-radius:999px;padding:4px}
+.seg button{border:0;background:transparent;padding:8px 14px;border-radius:999px;font-size:14px;font-weight:500;color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(10,50,60,.15)}
+
+/* ---------- stage ---------- */
+.stage{display:grid;grid-template-columns:420px minmax(0,1fr);gap:28px;padding:6px 22px 28px;max-width:1440px;margin:0 auto;align-items:start}
+.pane-label{font-size:13px;color:var(--ink-2);margin:0 0 8px 4px}
+
+/* ---------- phone ---------- */
+.phone-wrap{position:sticky;top:12px}
+.phone{background:var(--surface);border:1px solid var(--line);border-radius:34px;overflow:hidden;height:min(860px,calc(100vh - 110px));min-height:640px;display:flex;flex-direction:column;box-shadow:0 18px 50px -24px rgba(8,60,75,.45)}
+.p-bar{display:flex;align-items:center;gap:10px;padding:16px 18px 12px;background:var(--deep);color:#fff}
+:root[data-theme="dark"] .p-bar{color:#06262F}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .p-bar{color:#06262F}}
+.p-bar .who{display:block}
+.p-bar .who b{display:block;font-weight:600;font-size:16px}
+.p-bar .who span{font-size:12px;opacity:.85}
+.icon-btn{border:0;background:rgba(255,255,255,.14);color:inherit;border-radius:12px;height:38px;min-width:38px;padding:0 10px;display:grid;place-items:center;position:relative;font-size:13px;font-weight:600}
+.icon-btn svg{width:20px;height:20px}
+.dot-badge[hidden]{display:none}
+.dot-badge{position:absolute;top:-4px;right:-4px;background:var(--bad);color:#fff;font-size:11px;min-width:18px;height:18px;border-radius:9px;display:grid;place-items:center;padding:0 4px;font-weight:600}
+.p-body{flex:1;overflow-y:auto;padding:16px 16px 20px;background:var(--paper)}
+.p-nav{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);background:var(--surface)}
+.p-nav button{border:0;background:transparent;padding:10px 4px 12px;font-size:12px;color:var(--ink-3);display:flex;flex-direction:column;align-items:center;gap:3px;position:relative}
+.p-nav button svg{width:22px;height:22px}
+.p-nav button[aria-current="page"]{color:var(--deep)}
+.p-nav button[aria-current="page"]::before{content:"";position:absolute;top:0;left:30%;right:30%;height:3px;border-radius:0 0 3px 3px;background:var(--deep)}
+.screen{display:none}
+.screen.on{display:block}
+
+/* status hero — the one bold moment */
+.hero{border-radius:var(--radius-lg);padding:20px 18px 18px;display:flex;gap:16px;align-items:center;background:var(--safe-bg);color:var(--ink);transition:background .5s}
+.hero[data-s="warn"]{background:var(--warn-bg)}
+.hero[data-s="bad"]{background:var(--bad-bg)}
+.glass{width:108px;height:128px;flex:none}
+.hero h2{font-size:26px;line-height:1.1;font-weight:700;color:var(--safe)}
+.hero[data-s="warn"] h2{color:var(--warn)}
+.hero[data-s="bad"] h2{color:var(--bad)}
+.hero .hi{font-size:17px;font-weight:600;margin-top:4px}
+.hero p.sub{font-size:13px;color:var(--ink-2);margin-top:8px}
+.advice{margin-top:12px;border-radius:var(--radius);padding:12px 14px;background:var(--surface);border:1px solid var(--line);font-size:14px}
+.advice b{display:block;margin-bottom:2px}
+
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;margin:20px 2px 10px}
+.sec-h h3{font-size:16px;font-weight:600}
+.sec-h span{font-size:12px;color:var(--ink-3)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 12px 10px;position:relative}
+.tile .nm{font-size:13px;color:var(--ink-2)}
+.tile .val{font-size:26px;font-weight:600;line-height:1.15;margin-top:2px;font-variant-numeric:tabular-nums}
+.tile .val small{font-size:13px;font-weight:400;color:var(--ink-2);margin-left:3px}
+.tile .lim{font-size:11.5px;color:var(--ink-3)}
+.tile svg.spark{width:100%;height:28px;margin-top:4px;display:block}
+.tile .pip{position:absolute;top:12px;right:12px;width:10px;height:10px;border-radius:50%;background:var(--safe)}
+.tile[data-s="warn"] .pip{background:var(--warn)}
+.tile[data-s="bad"] .pip{background:var(--bad)}
+.tile[data-s="bad"]{border-color:var(--bad)}
+.strip{display:flex;gap:10px}
+.strip > div{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px}
+.strip b{display:block;font-size:20px;font-weight:600}
+.strip span{font-size:12px;color:var(--ink-2)}
+.demo{margin-top:18px;border:1.5px dashed var(--line);border-radius:var(--radius);padding:12px}
+.demo p{font-size:12px;color:var(--ink-2);margin-bottom:8px}
+.demo .row{display:flex;flex-wrap:wrap;gap:8px}
+.btn{border:0;border-radius:11px;padding:10px 14px;font-weight:500;font-size:14px;background:var(--deep);color:#fff}
+:root[data-theme="dark"] .btn{color:#06262F}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn{color:#06262F}}
+.btn.ghost{background:var(--surface-2);color:var(--ink)}
+.btn.danger{background:var(--bad);color:#fff}
+.btn.sm{padding:7px 11px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* device health */
+.score{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:14px 16px}
+.score .ring{width:74px;height:74px;flex:none}
+.score h3{font-size:17px;font-weight:600}
+.score p{font-size:13px;color:var(--ink-2)}
+.comp{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px}
+.comp .top{display:flex;align-items:center;gap:8px}
+.comp .top b{font-weight:500;font-size:14.5px;flex:1}
+.chip{font-size:11.5px;font-weight:600;border-radius:999px;padding:3px 9px;background:var(--safe-bg);color:var(--safe);white-space:nowrap}
+.chip[data-s="warn"]{background:var(--warn-bg);color:var(--warn)}
+.chip[data-s="bad"]{background:var(--bad-bg);color:var(--bad)}
+.chip[data-s="off"]{background:var(--off-bg);color:var(--off)}
+.bar{height:7px;border-radius:5px;background:var(--surface-2);margin:9px 0 6px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:5px;background:var(--safe);transition:width .6s}
+.bar[data-s="warn"] i{background:var(--warn)}
+.bar[data-s="bad"] i{background:var(--bad)}
+.comp .meta{font-size:12.5px;color:var(--ink-2)}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kv > div{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px}
+.kv span{font-size:12px;color:var(--ink-2);display:block}
+.kv b{font-weight:600;font-size:15px}
+
+/* alerts */
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.filters button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;color:var(--ink-2)}
+.filters button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.alert{display:flex;gap:12px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--safe);border-radius:var(--radius);padding:12px 12px 12px 12px;margin-bottom:8px}
+.alert[data-s="warn"]{border-left-color:var(--warn)}
+.alert[data-s="bad"]{border-left-color:var(--bad)}
+.alert[data-s="msg"]{border-left-color:var(--deep-2)}
+.alert.unread{background:var(--mist)}
+.alert .ic{width:34px;height:34px;flex:none;border-radius:10px;display:grid;place-items:center;background:var(--surface-2)}
+.alert .ic svg{width:18px;height:18px}
+.alert b{font-weight:600;font-size:14.5px;display:block}
+.alert p{font-size:13.5px;color:var(--ink-2);margin-top:2px}
+.alert time{font-size:11.5px;color:var(--ink-3);display:block;margin-top:5px}
+.empty{text-align:center;padding:36px 16px;color:var(--ink-2);font-size:14px}
+
+/* help */
+.field{margin-bottom:12px}
+.field label{display:block;font-size:13px;font-weight:500;margin-bottom:5px}
+.field select,.field textarea,.field input{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:10px 12px;font-size:14px}
+.field textarea{min-height:84px;resize:vertical}
+.ticket{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:11px 13px;margin-bottom:8px;font-size:13.5px}
+.ticket .t1{display:flex;gap:8px;align-items:center}
+.ticket .t1 b{flex:1;font-weight:600}
+.ticket p{color:var(--ink-2);margin-top:3px}
+.callcard{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin-top:14px}
+.callcard b{display:block}
+.callcard span{font-size:12.5px;color:var(--ink-2)}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--paper);padding:11px 18px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:calc(100% - 32px)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- centre ---------- */
+.centre{min-width:0}
+.c-head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.c-head h1{font-size:24px;font-weight:600;line-height:1.2}
+.c-head p{font-size:13.5px;color:var(--ink-2)}
+.live{margin-left:auto;display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink-2)}
+.live i{width:9px;height:9px;border-radius:50%;background:var(--safe);box-shadow:0 0 0 0 var(--safe);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(22,138,94,.5)}70%{box-shadow:0 0 0 8px rgba(22,138,94,0)}100%{box-shadow:0 0 0 0 rgba(22,138,94,0)}}
+@media (prefers-reduced-motion: reduce){.live i{animation:none}*{transition:none!important}}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;text-align:left;border-top:4px solid var(--deep-2)}
+.kpi[data-s="safe"]{border-top-color:var(--safe)}
+.kpi[data-s="bad"]{border-top-color:var(--bad)}
+.kpi[data-s="warn"]{border-top-color:var(--warn)}
+.kpi[data-s="off"]{border-top-color:var(--off)}
+.kpi b{display:block;font-size:28px;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi span{font-size:12.5px;color:var(--ink-2)}
+button.kpi{cursor:pointer}
+button.kpi[aria-pressed="true"]{outline:2px solid var(--ink);outline-offset:-2px}
+.c-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.side{order:-1;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+td .loc{white-space:nowrap}
+td.wp{white-space:nowrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px}
+.card h3{font-size:16px;font-weight:600}
+.card .ch{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.card .ch .sp{flex:1}
+.search{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:8px 11px;font-size:13.5px;min-width:0;width:190px}
+.tbl-wrap{overflow:auto;max-height:470px;margin:0 -16px;padding:0 16px}
+thead th{position:sticky;top:0;background:var(--surface);z-index:1}
+td:last-child,td:nth-child(7){white-space:nowrap}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:620px}
+th{text-align:left;font-weight:500;color:var(--ink-3);font-size:12px;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle;font-variant-numeric:tabular-nums}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--surface-2)}
+tbody tr[aria-selected="true"] td{background:var(--mist)}
+td .id{font-weight:600}
+td .loc{font-size:12px;color:var(--ink-2)}
+.minibar{display:inline-block;width:54px;height:6px;border-radius:4px;background:var(--surface-2);vertical-align:middle;margin-right:6px;overflow:hidden}
+.minibar i{display:block;height:100%;background:var(--safe)}
+.minibar[data-s="warn"] i{background:var(--warn)}
+.minibar[data-s="bad"] i{background:var(--bad)}
+.you{font-size:10.5px;font-weight:600;background:var(--deep);color:var(--paper);border-radius:5px;padding:1px 5px;margin-left:5px;vertical-align:1px}
+.dist{display:grid;gap:9px}
+.dist .r{display:grid;grid-template-columns:118px 1fr 30px;gap:8px;align-items:center;font-size:13px}
+.stack{display:flex;height:14px;border-radius:5px;overflow:hidden;background:var(--surface-2)}
+.stack i{display:block;height:100%}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin-top:10px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;background:var(--c)}
+.feed{max-height:290px;overflow-y:auto}
+.feed .f{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.feed .f:last-child{border-bottom:0}
+.feed .f i{width:8px;height:8px;border-radius:50%;margin-top:6px;flex:none;background:var(--deep-2)}
+.feed .f[data-s="bad"] i{background:var(--bad)}
+.feed .f[data-s="warn"] i{background:var(--warn)}
+.feed .f[data-s="safe"] i{background:var(--safe)}
+.feed .f time{display:block;font-size:11.5px;color:var(--ink-3)}
+.side{display:grid;gap:14px;align-content:start}
+.side .feed{max-height:200px}
+
+/* detail */
+.detail{margin-top:14px}
+.d-top{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.d-top h3{font-size:19px}
+.d-top p{font-size:13px;color:var(--ink-2)}
+.d-top .sp{flex:1}
+.d-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.d-cols h4{font-size:13px;font-weight:600;margin:0 0 8px;color:var(--ink-2)}
+.rd{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.rd b{font-weight:600;font-variant-numeric:tabular-nums}
+.rd b[data-s="bad"]{color:var(--bad)}
+.rd b[data-s="warn"]{color:var(--warn)}
+.notify textarea{min-height:92px}
+.notify .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.notify .row label{font-size:13px;display:flex;align-items:center;gap:5px}
+.close-x{border:0;background:var(--surface-2);border-radius:10px;padding:7px 11px;font-size:13px}
+
+/* ---------- responsive ---------- */
+@media (max-width:1180px){
+  .stage{grid-template-columns:390px minmax(0,1fr);gap:20px}
+  .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .d-cols{grid-template-columns:1fr 1fr}
+}
+@media (max-width:900px){
+  .seg{display:flex}
+  .topbar{padding:12px 14px}
+  .brand small{display:none}
+  .stage{grid-template-columns:1fr;padding:0 0 12px}
+  .pane-label{display:none}
+  .stage[data-view="customer"] .centre{display:none}
+  .stage[data-view="centre"] .phone-wrap{display:none}
+  .phone-wrap{position:static}
+  .phone{border-radius:0;border-left:0;border-right:0;height:calc(100vh - 66px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:560px;box-shadow:none}
+  .centre{padding:4px 14px 20px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .d-cols{grid-template-columns:1fr}
+  .search{width:100%}
+  .side{grid-template-columns:minmax(0,1fr)}
+}
+
+/* customer switcher */
+.who-btn{flex:1;min-width:0;border:0;background:transparent;color:inherit;text-align:left;padding:4px 6px;margin:-4px -6px;border-radius:10px;display:flex;align-items:center;gap:6px}
+.who-btn:hover{background:rgba(255,255,255,.1)}
+.who-btn .who{min-width:0}
+.who-btn .who b,.who-btn .who span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who-btn svg{width:18px;height:18px;flex:none;opacity:.8}
+.pick{width:min(520px,100%)}
+.pick .body{padding:12px 16px 16px}
+.pick .list{max-height:min(60vh,520px);overflow-y:auto;margin-top:10px}
+.pick .opt{width:100%;display:flex;gap:10px;align-items:center;border:0;background:transparent;text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);border-radius:8px}
+.pick .opt:hover{background:var(--surface-2)}
+.pick .opt[aria-current="true"]{background:var(--mist)}
+.pick .opt div{flex:1;min-width:0}
+.pick .opt b{display:block;font-weight:600;font-size:14.5px}
+.pick .opt span.l{font-size:12.5px;color:var(--ink-2)}
+/* ---------- unit report ---------- */
+.modal{position:fixed;inset:0;z-index:40;background:rgba(6,30,38,.55);display:flex;justify-content:center;align-items:flex-start;padding:calc(18px + env(safe-area-inset-top,0px)) 14px calc(18px + env(safe-area-inset-bottom,0px));overflow-y:auto}
+.modal[hidden]{display:none}
+.sheet{background:var(--surface);color:var(--ink);border-radius:var(--radius-lg);width:min(880px,100%);box-shadow:0 30px 80px -30px rgba(0,0,0,.6)}
+.sheet-bar{position:sticky;top:0;display:flex;gap:8px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--surface);border-radius:var(--radius-lg) var(--radius-lg) 0 0;z-index:2;flex-wrap:wrap}
+.sheet-bar b{flex:1;font-weight:600;min-width:140px}
+.rep{padding:20px 22px 26px}
+.rep header{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;padding-bottom:14px;border-bottom:2px solid var(--ink)}
+.rep header h2{font-size:24px;font-weight:700;line-height:1.15}
+.rep header p{font-size:13.5px;color:var(--ink-2);margin-top:3px}
+.rep header .when{margin-left:auto;text-align:right;font-size:12.5px;color:var(--ink-2)}
+.verdict{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0 6px}
+.verdict > div{border-radius:var(--radius);padding:12px 14px;background:var(--surface-2)}
+.verdict > div[data-s="safe"]{background:var(--safe-bg)}
+.verdict > div[data-s="warn"]{background:var(--warn-bg)}
+.verdict > div[data-s="bad"]{background:var(--bad-bg)}
+.verdict > div[data-s="off"]{background:var(--off-bg)}
+.verdict span{font-size:12px;color:var(--ink-2);display:block}
+.verdict b{font-size:19px;font-weight:600;display:block;line-height:1.25}
+.verdict small{font-size:12.5px;color:var(--ink-2)}
+.rep h3{font-size:15.5px;font-weight:600;margin:22px 0 8px}
+.rep table{min-width:560px;font-size:13.5px}
+.rep td,.rep th{padding:7px 8px}
+.rep tbody tr{cursor:default}
+.rep tbody tr:hover td{background:transparent}
+.rep .tw{overflow-x:auto}
+.rep svg.tr{width:110px;height:24px;display:block}
+.rep .s-safe{color:var(--safe);font-weight:600}
+.rep .s-warn{color:var(--warn);font-weight:600}
+.rep .s-bad{color:var(--bad);font-weight:600}
+.rep .s-off{color:var(--off);font-weight:600}
+.rep ol{margin:0;padding-left:20px;font-size:14px}
+.rep ol li{margin-bottom:5px}
+.rep .note{border-left:4px solid var(--deep-2);background:var(--mist);padding:10px 14px;border-radius:0 10px 10px 0;font-size:13.5px}
+.rep .ev{font-size:13.5px;border-bottom:1px solid var(--line);padding:6px 0;display:flex;gap:10px}
+.rep .ev time{color:var(--ink-3);font-size:12px;min-width:128px;flex:none}
+.rep .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rep .grid2 > div{border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px;font-size:13.5px}
+.rep .grid2 span{color:var(--ink-2);font-size:12px;display:block}
+.rep .foot{margin-top:22px;font-size:11.5px;color:var(--ink-3);border-top:1px solid var(--line);padding-top:10px}
+.report-btn{margin-top:14px;width:100%}
+@media (max-width:640px){ .verdict{grid-template-columns:1fr} .rep .grid2{grid-template-columns:1fr} .rep{padding:16px} .rep header .when{margin-left:0;text-align:left} }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3c5 6.2 9 11 9 16a9 9 0 0 1-18 0c0-5 4-9.8 9-16z" fill="var(--deep-2)"/><path d="M11 20.5c1.8 2.6 6.2 2.6 8 0" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+    <div>Aquanex<small>Smart water purifier – customer app and service centre prototype</small></div>
+  </div>
+  <div class="seg" role="group" aria-label="Choose view">
+    <button type="button" data-view="customer" aria-pressed="true">Customer app</button>
+    <button type="button" data-view="centre" aria-pressed="false">Service centre</button>
+  </div>
+</header>
+
+<main class="stage" id="stage" data-view="customer">
+
+  <!-- ================= CUSTOMER PHONE ================= -->
+  <section class="phone-wrap" aria-label="Customer mobile app">
+    <p class="pane-label">Customer mobile app</p>
+    <div class="phone">
+      <div class="p-bar">
+        <button class="who-btn" type="button" id="who-btn" aria-label="Change customer"><span class="who"><b id="c-name">Sunita Devi</b><span id="c-unit">AQX-0142, Jharia, Dhanbad</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <button class="icon-btn" id="lang" type="button" aria-label="Switch language">हिं</button>
+        <button class="icon-btn" id="bell" type="button" aria-label="Open alerts">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          <span class="dot-badge" id="badge" hidden>0</span>
+        </button>
+      </div>
+
+      <div class="p-body" id="p-body">
+        <!-- Water -->
+        <div class="screen on" id="s-water">
+          <div class="hero" id="hero" data-s="safe">
+            <svg class="glass" viewBox="0 0 108 128" aria-hidden="true">
+              <defs><clipPath id="gclip"><path d="M14 10h80l-9 108H23z"/></clipPath></defs>
+              <g clip-path="url(#gclip)">
+                <rect x="0" y="0" width="108" height="128" fill="var(--surface)"/>
+                <path id="wave" d="M0 44 Q 27 36 54 44 T 108 44 V128 H0z" fill="var(--safe)" opacity=".85"/>
+                <g id="specks" fill="#6b4a2b" opacity="0"></g>
+              </g>
+              <path d="M14 10h80l-9 108H23z" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+              <path id="gmark" d="M38 78l11 11 22-24" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div>
+              <h2 id="h-title">Safe to drink</h2>
+              <div class="hi" id="h-hi">पीने के लिए सुरक्षित</div>
+              <p class="sub" id="h-sub">Checked a moment ago</p>
+            </div>
+          </div>
+          <div class="advice" id="advice"><b id="adv-t">All four checks passed</b><span id="adv-p">Water from the clean tank meets BIS IS 10500 limits.</span></div>
+
+          <div class="sec-h"><h3 data-i18n="liveReadings">Live water readings</h3><span data-i18n="treatedWater">treated water</span></div>
+          <div class="tiles" id="tiles"></div>
+
+          <div class="sec-h"><h3 data-i18n="today">Today</h3><span id="today-date"></span></div>
+          <div class="strip">
+            <div><b id="st-l">0 L</b><span data-i18n="purified">purified</span></div>
+            <div><b id="st-tank">0%</b><span data-i18n="tankLevel">clean tank</span></div>
+            <div><b id="st-rej">0 L</b><span data-i18n="reused">reject water reused</span></div>
+          </div>
+
+          <div class="demo">
+            <p data-i18n="demoNote">Demo controls – simulate what the sensors would report.</p>
+            <div class="row">
+              <button class="btn danger sm" type="button" id="d-bad">Simulate contamination</button>
+              <button class="btn ghost sm" type="button" id="d-warn">Raise turbidity</button>
+              <button class="btn ghost sm" type="button" id="d-ok">Restore normal</button>
+              <button class="btn ghost sm" type="button" id="d-switch">Change customer</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Device -->
+        <div class="screen" id="s-device">
+          <div class="score">
+            <svg class="ring" viewBox="0 0 74 74" aria-hidden="true">
+              <circle cx="37" cy="37" r="31" fill="none" stroke="var(--surface-2)" stroke-width="8"/>
+              <circle id="ring-arc" cx="37" cy="37" r="31" fill="none" stroke="var(--safe)" stroke-width="8" stroke-linecap="round" stroke-dasharray="194.8" stroke-dashoffset="40" transform="rotate(-90 37 37)"/>
+              <text id="ring-t" x="37" y="43" text-anchor="middle" font-size="18" font-weight="600" fill="var(--ink)" font-family="Lexend, sans-serif">80</text>
+            </svg>
+            <div><h3 id="score-t">Purifier in good condition</h3><p id="score-p">1 part needs attention soon</p></div>
+          </div>
+          <div class="sec-h"><h3 data-i18n="parts">Filters and parts</h3><span data-i18n="lifeLeft">life left</span></div>
+          <div id="comps"></div>
+          <div class="sec-h"><h3 data-i18n="powerNet">Power and connection</h3></div>
+          <div class="kv" id="sys"></div>
+          <button class="btn ghost report-btn" type="button" id="my-report">View my purifier report</button>
+        </div>
+
+        <!-- Alerts -->
+        <div class="screen" id="s-alerts">
+          <div class="filters" role="group" aria-label="Filter alerts">
+            <button type="button" data-f="all" aria-pressed="true" data-i18n="fAll">All</button>
+            <button type="button" data-f="water" aria-pressed="false" data-i18n="fWater">Water</button>
+            <button type="button" data-f="device" aria-pressed="false" data-i18n="fDevice">Device</button>
+            <button type="button" data-f="msg" aria-pressed="false" data-i18n="fMsg">From service centre</button>
+          </div>
+          <div id="alist"></div>
+        </div>
+
+        <!-- Help -->
+        <div class="screen" id="s-help">
+          <div class="sec-h" style="margin-top:4px"><h3 data-i18n="report">Report a problem</h3></div>
+          <div class="field">
+            <label for="h-type" data-i18n="issue">What is wrong?</label>
+            <select id="h-type">
+              <option>Water tastes or smells bad</option>
+              <option>Low water flow</option>
+              <option>Machine not starting</option>
+              <option>Leak from pipes</option>
+              <option>Red light / beeping</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="h-msg" data-i18n="details">Details (optional)</label>
+            <textarea id="h-msg" placeholder="e.g. Water looks yellow since morning"></textarea>
+          </div>
+          <div class="field">
+            <label style="display:flex;gap:8px;align-items:center;font-weight:400"><input type="checkbox" id="h-visit" style="width:auto"> <span data-i18n="visit">Request a technician visit</span></label>
+          </div>
+          <button class="btn" type="button" id="h-send" style="width:100%" data-i18n="send">Send to service centre</button>
+
+          <div class="sec-h"><h3 data-i18n="myReq">My requests</h3></div>
+          <div id="tickets"></div>
+
+          <div class="callcard">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="var(--deep)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>
+            <div><b data-i18n="helpline">Aquanex helpline</b><span data-i18n="helpHrs">Dhanbad service centre, 8 am – 8 pm</span></div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="p-nav" aria-label="App sections">
+        <button type="button" data-s="water" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2.7c4 5 7 8.8 7 12.3a7 7 0 0 1-14 0c0-3.5 3-7.3 7-12.3z"/></svg><span data-i18n="nWater">Water</span></button>
+        <button type="button" data-s="device"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 7h6M9 11h6M12 16v2"/></svg><span data-i18n="nDevice">Device</span></button>
+        <button type="button" data-s="alerts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span data-i18n="nAlerts">Alerts</span></button>
+        <button type="button" data-s="help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></svg><span data-i18n="nHelp">Help</span></button>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ================= SERVICE CENTRE ================= -->
+  <section class="centre" aria-label="Central monitoring dashboard">
+    <p class="pane-label">Central monitoring – all installed purifiers</p>
+    <div class="c-head">
+      <div><h1>Service centre</h1><p>Every Aquanex unit reports readings and part health here every few seconds.</p></div>
+      <div class="live"><i></i><span id="clock">Live</span></div>
+    </div>
+
+    <div class="kpis" id="kpis"></div>
+
+    <div class="c-grid">
+      <div class="card">
+        <div class="ch">
+          <h3 id="tbl-title">All purifiers</h3><span class="sp"></span>
+          <select class="search" id="f-dist" aria-label="Filter by district" style="width:auto"></select>
+          <input class="search" id="q" type="search" placeholder="Search, or type a unit ID + Enter for its report" aria-label="Search units">
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Unit</th><th>Water</th><th>pH</th><th>TDS</th><th>Turb.</th><th>Weakest part</th><th>Power</th><th>Last report</th></tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+        <p id="tbl-empty" class="empty" hidden>No purifiers match this filter.</p>
+      </div>
+
+      <div class="side">
+        <div class="card">
+          <div class="ch"><h3>Units by district</h3></div>
+          <div class="dist" id="dist"></div>
+          <div class="legend"><span style="--c:var(--safe)">Safe</span><span style="--c:var(--warn)">Needs attention</span><span style="--c:var(--bad)">Unsafe</span><span style="--c:var(--off)">Offline</span></div>
+        </div>
+        <div class="card">
+          <div class="ch"><h3>Activity</h3><span class="sp"></span><span style="font-size:12px;color:var(--ink-2)">alerts and customer requests</span></div>
+          <div class="feed" id="feed"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card detail" id="detail" hidden>
+      <div class="d-top">
+        <div><h3 id="d-id">AQX-0142</h3><p id="d-sub"></p></div>
+        <span class="sp"></span>
+        <span class="chip" id="d-chip">Safe</span>
+        <button class="btn ghost sm" type="button" id="d-open">Open in customer app</button>
+        <button class="btn sm" type="button" id="d-report">Unit report</button>
+        <button class="close-x" type="button" id="d-close">Close</button>
+      </div>
+      <div class="d-cols">
+        <div><h4>Water readings</h4><div id="d-read"></div></div>
+        <div><h4>Part health</h4><div id="d-parts"></div></div>
+        <div class="notify">
+          <h4>Notify customer</h4>
+          <div class="field">
+            <label for="n-tpl">Message</label>
+            <select id="n-tpl"></select>
+          </div>
+          <div class="field"><textarea id="n-msg" aria-label="Message text"></textarea></div>
+          <div class="row" style="margin-bottom:10px">
+            <label><input type="checkbox" id="n-app" checked> App</label>
+            <label><input type="checkbox" id="n-sms" checked> SMS</label>
+          </div>
+          <div class="row">
+            <button class="btn" type="button" id="n-send">Send to customer</button>
+            <button class="btn ghost" type="button" id="n-visit">Schedule visit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+  <div class="sheet">
+    <div class="sheet-bar">
+      <b id="sheet-title">Unit report</b>
+      <button class="btn ghost sm" type="button" id="r-refresh">Refresh</button>
+      <button class="btn ghost sm" type="button" id="r-send">Send to customer</button>
+      <button class="btn sm" type="button" id="r-dl" hidden>Download</button>
+      <button class="close-x" type="button" id="r-close">Close</button>
+    </div>
+    <div id="rep-body"></div>
+  </div>
+</div>
+<div class="modal" id="pick" hidden role="dialog" aria-modal="true" aria-labelledby="pick-title">
+  <div class="sheet pick">
+    <div class="sheet-bar"><b id="pick-title">Choose customer</b><button class="close-x" type="button" id="pick-close">Close</button></div>
+    <div class="body">
+      <input class="search" id="pick-q" type="search" placeholder="Search name, unit ID or village" aria-label="Search customers" style="width:100%">
+      <div class="list" id="pick-list"></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+/* ------------------------------------------------------------------
+   Aquanex prototype. In a real deployment each ESP32 unit publishes
+   readings over MQTT/HTTPS (Wi-Fi or GSM) to a cloud database; this
+   page simulates that fleet in the browser.
+------------------------------------------------------------------- */
+
+// ---------- helpers ----------
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const el = (tag, cls, html) => { const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; };
+const esc = s => String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+let seed = 42; const rnd = ()=>{ seed=(seed*16807)%2147483647; return (seed-1)/2147483646; };
+const pick = a => a[Math.floor(rnd()*a.length)];
+const fmtTime = t => { const d=new Date(t), tm=d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}); return d.toDateString()===new Date().toDateString() ? tm : d.toLocaleDateString("en-IN",{day:"numeric",month:"short"})+", "+tm; };
+function ago(t){ const s=Math.round((Date.now()-t)/1000); if(s<10) return L("justNow"); if(s<60) return s+" s"; const m=Math.round(s/60); if(m<60) return m+" min"; const h=Math.round(m/60); return h+" h"; }
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("on"),2600); }
+
+// ---------- language ----------
+let lang = "en";
+try { lang = localStorage.getItem("aqx-lang") || "en"; } catch(e){}
+const T = {
+  en:{ liveReadings:"Live water readings", treatedWater:"treated water", today:"Today", purified:"purified", tankLevel:"clean tank", reused:"reject water reused",
+       demoNote:"Demo controls – simulate what the sensors would report.", parts:"Filters and parts", lifeLeft:"life left", powerNet:"Power and connection",
+       fAll:"All", fWater:"Water", fDevice:"Device", fMsg:"From service centre", report:"Report a problem", issue:"What is wrong?", details:"Details (optional)",
+       visit:"Request a technician visit", send:"Send to service centre", myReq:"My requests", helpline:"Aquanex helpline", helpHrs:"Dhanbad service centre, 8 am – 8 pm",
+       nWater:"Water", nDevice:"Device", nAlerts:"Alerts", nHelp:"Help", justNow:"just now",
+       safeT:"Safe to drink", warnT:"Drink with care", badT:"Do not drink",
+       checked:"Checked", ago:"ago",
+       advOkT:"All four checks passed", advOkP:"Water from the clean tank meets BIS IS 10500 limits.",
+       advWarnT:"One reading is near the limit", advWarnP:"The purifier is re-treating the water. Boil water for small children until it turns green.",
+       advBadT:"Unsafe water stopped from reaching the tank", advBadP:"The valve has sent water back for re-treatment. Use stored clean water or boil water. The service centre has been told.",
+       ph:"pH", tds:"TDS", turb:"Turbidity", temp:"Temperature",
+       scoreGood:"Purifier in good condition", scoreSoon:"Service needed soon", scoreBad:"Service needed now",
+       needAttn:n=>n===0?"All parts working well":n===1?"1 part needs attention":n+" parts need attention",
+       noAlerts:"No alerts here. You will be notified if anything changes.", noTickets:"No requests yet.",
+       sent:"Sent to service centre", open:"Open", scheduled:"Visit scheduled", resolved:"Resolved"},
+  hi:{ liveReadings:"पानी की लाइव जाँच", treatedWater:"साफ़ किया गया पानी", today:"आज", purified:"साफ़ पानी", tankLevel:"साफ़ टंकी", reused:"बचा पानी दोबारा उपयोग",
+       demoNote:"डेमो – सेंसर की स्थिति बदलकर देखें।", parts:"फ़िल्टर और पुर्ज़े", lifeLeft:"बची उम्र", powerNet:"बिजली और नेटवर्क",
+       fAll:"सभी", fWater:"पानी", fDevice:"मशीन", fMsg:"सर्विस सेंटर से", report:"समस्या बताएँ", issue:"क्या समस्या है?", details:"विवरण (वैकल्पिक)",
+       visit:"तकनीशियन को बुलाएँ", send:"सर्विस सेंटर को भेजें", myReq:"मेरे अनुरोध", helpline:"अक्वानेक्स हेल्पलाइन", helpHrs:"धनबाद सर्विस सेंटर, सुबह 8 – रात 8",
+       nWater:"पानी", nDevice:"मशीन", nAlerts:"सूचना", nHelp:"मदद", justNow:"अभी",
+       safeT:"पीने योग्य", warnT:"सावधानी से पिएँ", badT:"न पिएँ",
+       checked:"जाँचा गया", ago:"पहले",
+       advOkT:"चारों जाँच ठीक", advOkP:"साफ़ टंकी का पानी BIS IS 10500 मानकों के अनुसार है।",
+       advWarnT:"एक जाँच सीमा के पास है", advWarnP:"मशीन पानी को दोबारा साफ़ कर रही है। हरा होने तक छोटे बच्चों के लिए पानी उबालें।",
+       advBadT:"असुरक्षित पानी टंकी में जाने से रोका गया", advBadP:"पानी दोबारा साफ़ करने भेजा गया है। रखा हुआ साफ़ पानी या उबला पानी पिएँ। सर्विस सेंटर को सूचना दी गई है।",
+       ph:"pH", tds:"TDS", turb:"गंदलापन", temp:"तापमान",
+       scoreGood:"मशीन अच्छी हालत में है", scoreSoon:"जल्द सर्विस चाहिए", scoreBad:"अभी सर्विस चाहिए",
+       needAttn:n=>n===0?"सभी पुर्ज़े ठीक हैं":n+" पुर्ज़ों पर ध्यान दें",
+       noAlerts:"कोई सूचना नहीं। कुछ बदलने पर बताया जाएगा।", noTickets:"अभी कोई अनुरोध नहीं।",
+       sent:"सर्विस सेंटर को भेजा गया", open:"खुला", scheduled:"विज़िट तय", resolved:"हल हुआ"}
+};
+const L = k => (T[lang][k] ?? T.en[k]);
+
+// ---------- limits (BIS IS 10500:2012 acceptable / permissible) ----------
+const PARAMS = {
+  ph:   {unit:"",     lim:"6.5 – 8.5",   fmt:v=>v.toFixed(1), status:v=> v<6.5||v>8.5 ? "bad" : (v<6.7||v>8.3 ? "warn":"safe")},
+  tds:  {unit:"mg/L", lim:"≤ 500 mg/L",  fmt:v=>Math.round(v), status:v=> v>500 ? "bad" : (v>350 ? "warn":"safe")},
+  turb: {unit:"NTU",  lim:"≤ 1 NTU",     fmt:v=>v.toFixed(2), status:v=> v>5 ? "bad" : (v>1 ? "warn":"safe")},
+  temp: {unit:"°C",   lim:"10 – 35 °C",  fmt:v=>v.toFixed(1), status:v=> v>35||v<5 ? "warn":"safe"}
+};
+const worst = arr => arr.includes("bad")?"bad":arr.includes("warn")?"warn":"safe";
+function waterStatus(u){ if(!u.online) return "off"; return worst(["ph","tds","turb","temp"].map(k=>PARAMS[k].status(u.r[k]))); }
+function partStatus(p){ return p.life<=10?"bad":p.life<=25?"warn":"safe"; }
+function weakest(u){ return u.parts.reduce((a,b)=>a.life<b.life?a:b); }
+
+// ---------- fleet ----------
+const DISTRICTS = {
+  "Dhanbad":["Jharia","Katras","Baghmara","Tundi","Nirsa"],
+  "Bokaro":["Bermo","Chas","Chandankiyari","Gomia"],
+  "Ramgarh":["Patratu","Gola","Mandu"],
+  "East Singhbhum":["Jaduguda","Musabani","Ghatshila"],
+  "West Singhbhum":["Noamundi","Chaibasa","Kiriburu"],
+  "Sahebganj":["Rajmahal","Udhwa","Barhait"]
+};
+const NAMES = ["Ramesh Mahto","Anita Kumari","Birsa Munda","Pooja Soren","Manoj Oraon","Kavita Hansdah","Sanjay Mandal","Rekha Tudu","Dilip Kisku","Meena Devi","Rajesh Ravidas","Sarita Marandi","Amit Gope","Lakshmi Hembrom","Sunil Bhuiyan","Geeta Murmu","Vikas Ho","Phulmani Besra","Ajay Singh","Champa Kerketta"];
+const SITES = ["Home","Govt. school","Anganwadi","PHC","Panchayat bhawan","Community tap"];
+
+function makeParts(bias){
+  const L0 = x=>clamp(Math.round(x),2,100);
+  return [
+    {k:"pre",  n:"Sediment pre-filter",  life:L0(20+rnd()*80-bias), unitTxt:"litres", cap:3000},
+    {k:"ro",   n:"RO membrane",          life:L0(35+rnd()*65-bias*.6), cap:12000},
+    {k:"carb", n:"Carbon filter",        life:L0(25+rnd()*75-bias), cap:6000},
+    {k:"uv",   n:"UV lamp",              life:L0(40+rnd()*60-bias*.5), cap:9000, hours:true},
+    {k:"pump", n:"Water pump",           life:L0(60+rnd()*40-bias*.3), cap:20000},
+    {k:"sens", n:"Sensor calibration",   life:L0(30+rnd()*70-bias*.8), cap:90, days:true}
+  ];
+}
+function makeUnit(i, opts={}){
+  const dist = opts.dist || pick(Object.keys(DISTRICTS));
+  const bias = opts.bias ?? (rnd()<.2 ? 55 : 0);
+  const u = {
+    id: opts.id || ("AQX-" + String(100+i*7+(100+i*7>=142?1:0)).padStart(4,"0")),
+    cust: opts.cust || pick(NAMES),
+    site: opts.site || pick(SITES),
+    dist, village: opts.village || pick(DISTRICTS[dist]),
+    online: opts.online ?? (rnd()>.08),
+    power: opts.power || (rnd()<.35 ? "Solar" : "Grid"),
+    battery: Math.round(55+rnd()*45),
+    net: opts.net || (rnd()<.6 ? "GSM" : "Wi-Fi"),
+    signal: Math.round(1+rnd()*4),
+    last: Date.now() - (opts.online===false ? 3600e3*(3+rnd()*20) : rnd()*20e3),
+    litres: Math.round(20+rnd()*60),
+    tank: Math.round(40+rnd()*55),
+    r: { ph: 7.1+(rnd()-.5)*.6, tds: 90+rnd()*120, turb: .2+rnd()*.5, temp: 24+rnd()*6 },
+    hist: {ph:[],tds:[],turb:[],temp:[]},
+    parts: makeParts(bias),
+    forced: null,
+    log: [],
+    installed: 0, lastService: 0
+  };
+  if(opts.issue==="tds"){ u.r.tds = 420+rnd()*60; }
+  if(opts.issue==="turb"){ u.r.turb = 1.6+rnd()*1.5; }
+  if(opts.issue==="bad"){ u.r.turb = 6+rnd()*4; u.r.ph = 6.1; }
+  for(const k in u.hist) for(let j=0;j<24;j++) u.hist[k].push(u.r[k]);
+  return u;
+}
+const fleet = [];
+let ME = makeUnit(0,{id:"AQX-0142", cust:"Sunita Devi", site:"Home", dist:"Dhanbad", village:"Jharia", online:true, power:"Solar", net:"GSM", bias:0});
+ME.parts.find(p=>p.k==="pre").life = 22;   // one part near replacement for the demo
+ME.parts.find(p=>p.k==="sens").life = 64;
+ME.r = {ph:7.2, tds:118, turb:.35, temp:27.4};
+for(const k in ME.hist){ ME.hist[k]=[]; for(let j=0;j<24;j++) ME.hist[k].push(ME.r[k]*(1+(rnd()-.5)*.04)); }
+fleet.push(ME);
+for(let i=1;i<48;i++){
+  const roll = rnd();
+  fleet.push(makeUnit(i, roll<.06?{issue:"bad"}: roll<.14?{issue:"turb"} : roll<.2?{issue:"tds"} : {}));
+}
+fleet.sort((a,b)=>a.id.localeCompare(b.id));
+// varied starting history (separate RNG so the seeded fleet stays the same)
+fleet.forEach(u=>{ if(u===ME) return; const sc={ph:.08,tds:.04,turb:.12,temp:.02};
+  for(const k in u.hist){ const arr=[]; let v=u.r[k]; for(let j=0;j<24;j++){ arr.unshift(v); v = v*(1+(Math.random()-.5)*sc[k]); if(k==="turb" && u.r.turb>1) v = v - (u.r.turb-.4)/30; v=Math.max(k==="turb"?.05:1,v); } u.hist[k]=arr; } });
+// dates from a hash of the ID so they don't disturb the seeded fleet
+fleet.forEach(u=>{ let h=0; for(const c of u.id) h=(h*31+c.charCodeAt(0))%9973; u.installed=Date.now()-(60+h%300)*86400e3; u.lastService=Date.now()-(5+(h*7)%80)*86400e3; });
+
+// ---------- shared message stores ----------
+const alertsBy = {};       // customer-app alerts, per unit
+const alertsOf = u => (alertsBy[u.id] ||= []);
+const feed = [];           // service centre activity
+const tickets = [];        // customer requests
+
+function pushCust(a, u=ME){ alertsOf(u).unshift(Object.assign({t:Date.now(), read:false}, a)); if(u===ME){ renderAlerts(); renderBadge(); } }
+function pushFeed(f){ const e=Object.assign({t:Date.now()}, f); feed.unshift(e); if(feed.length>60) feed.pop(); if(f.unit){ const u=fleet.find(x=>x.id===f.unit); if(u){ u.log.unshift(e); if(u.log.length>40) u.log.pop(); } } renderFeed(); }
+
+// seed some history
+const now = Date.now();
+alertsOf(ME).push({t:now-5400e3, read:true, cat:"device", s:"warn", title:"Pre-filter at 22%", body:"The sediment pre-filter will need replacing in about 10 days. The service centre will contact you.", tag:"device"});
+alertsOf(ME).push({t:now-86400e3, read:true, cat:"msg", s:"msg", title:"Service centre", body:"Your sensors were calibrated on the last visit. Thank you for using Aquanex.", tag:"msg"});
+fleet.filter(u=>waterStatus(u)==="bad").forEach(u=>feed.push({t:now-rnd()*3000e3, s:"bad", unit:u.id, text:`${u.id} (${u.village}) – unsafe water blocked, re-treating`}));
+fleet.filter(u=>waterStatus(u)==="warn").forEach(u=>u.log.push({t:now-rnd()*2000e3, s:"warn", text:`${u.id} – reading near limit, water re-treated`}));
+fleet.filter(u=>!u.online).forEach(u=>feed.push({t:u.last, s:"warn", unit:u.id, text:`${u.id} (${u.village}) stopped reporting`}));
+feed.forEach(f=>{ if(f.unit){ const u=fleet.find(x=>x.id===f.unit); if(u) u.log.push(f); } });
+fleet.forEach(u=>{ u.log.push({t:u.lastService, s:"safe", text:`Routine service visit – sensors checked`}); u.log.sort((a,b)=>b.t-a.t); });
+feed.sort((a,b)=>b.t-a.t);
+
+// ---------- CUSTOMER APP ----------
+let lastMeStatus = waterStatus(ME);
+
+function sparkPath(arr,w=150,h=28){
+  const mn=Math.min(...arr), mx=Math.max(...arr), sp=(mx-mn)||1;
+  return arr.map((v,i)=>`${i?"L":"M"}${(i/(arr.length-1)*w).toFixed(1)} ${(h-3-(v-mn)/sp*(h-6)).toFixed(1)}`).join(" ");
+}
+function renderTiles(){
+  const box=$("#tiles"); box.innerHTML="";
+  ["ph","tds","turb","temp"].forEach(k=>{
+    const P=PARAMS[k], v=ME.r[k], s=P.status(v);
+    const t=el("div","tile");
+    t.dataset.s=s;
+    const col = s==="bad"?"var(--bad)":s==="warn"?"var(--warn)":"var(--deep-2)";
+    t.innerHTML=`<i class="pip" aria-hidden="true"></i><div class="nm">${esc(L(k))}</div>
+      <div class="val">${P.fmt(v)}<small>${P.unit}</small></div><div class="lim">${k==="temp"?"":"Limit "}${P.lim}</div>
+      <svg class="spark" viewBox="0 0 150 28" preserveAspectRatio="none" aria-hidden="true"><path d="${sparkPath(ME.hist[k])}" fill="none" stroke="${col}" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;
+    t.setAttribute("aria-label",`${L(k)} ${P.fmt(v)} ${P.unit}, ${s}`);
+    box.appendChild(t);
+  });
+}
+let specksMade=false;
+function renderHero(){
+  const s = waterStatus(ME);
+  const hero=$("#hero"); hero.dataset.s=s;
+  const tmap={safe:["safeT","advOkT","advOkP"],warn:["warnT","advWarnT","advWarnP"],bad:["badT","advBadT","advBadP"]}[s];
+  $("#h-title").textContent = L(tmap[0]);
+  $("#h-hi").textContent = lang==="en" ? T.hi[tmap[0]] : T.en[tmap[0]];
+  $("#h-sub").textContent = `${L("checked")} ${ago(ME.last)} ${ago(ME.last)===L("justNow")?"":L("ago")}`.trim();
+  $("#adv-t").textContent=L(tmap[1]); $("#adv-p").textContent=L(tmap[2]);
+  const col = s==="bad"?"var(--bad)":s==="warn"?"var(--warn)":"var(--safe)";
+  $("#wave").setAttribute("fill", s==="safe" ? "var(--deep-2)" : col);
+  const lvl = 128 - (ME.tank/100)*108 - 6;
+  $("#wave").setAttribute("d", `M0 ${lvl} Q 27 ${lvl-8} 54 ${lvl} T 108 ${lvl} V128 H0z`);
+  if(!specksMade){ const g=$("#specks"); for(let i=0;i<14;i++){ const c=document.createElementNS("http://www.w3.org/2000/svg","circle"); c.setAttribute("cx",24+rnd()*60); c.setAttribute("cy",60+rnd()*52); c.setAttribute("r",1.5+rnd()*2); g.appendChild(c);} specksMade=true; }
+  $("#specks").setAttribute("opacity", s==="bad"?".75":s==="warn"?".3":"0");
+  $("#gmark").setAttribute("d", s==="safe" ? "M38 78l11 11 22-24" : s==="warn" ? "M54 64v18M54 92v1" : "M40 66l28 28M68 66l-28 28");
+  $("#st-l").textContent = ME.litres+" L";
+  $("#st-tank").textContent = ME.tank+"%";
+  $("#st-rej").textContent = Math.round(ME.litres*.6)+" L";
+  $("#today-date").textContent = new Date().toLocaleDateString(lang==="hi"?"hi-IN":"en-IN",{day:"numeric",month:"short"});
+}
+function partMeta(p){
+  const left = p.days ? Math.round(p.cap*p.life/100)+" days to next calibration"
+            : p.hours ? Math.round(p.cap*p.life/100).toLocaleString("en-IN")+" hours left"
+            : "≈ "+Math.round(p.cap*p.life/100).toLocaleString("en-IN")+" litres left";
+  const s=partStatus(p);
+  const act = s==="bad" ? "Replace now – technician will be sent" : s==="warn" ? "Replacement will be arranged soon" : "No action needed";
+  return {left, act, s};
+}
+function renderDevice(){
+  const box=$("#comps"); box.innerHTML="";
+  let n=0, sum=0;
+  ME.parts.forEach(p=>{
+    const m=partMeta(p); if(m.s!=="safe") n++; sum+=p.life;
+    const c=el("div","comp");
+    const chipTxt = m.s==="bad"?"Replace":m.s==="warn"?"Due soon":"Good";
+    c.innerHTML=`<div class="top"><b>${esc(p.n)}</b><span class="chip" data-s="${m.s}">${chipTxt}</span></div>
+      <div class="bar" data-s="${m.s}" role="img" aria-label="${p.life}% life left"><i style="width:${p.life}%"></i></div>
+      <div class="meta">${p.life}% – ${m.left}. ${m.act}.</div>`;
+    box.appendChild(c);
+  });
+  const score = Math.round(sum/ME.parts.length);
+  const sc = ME.parts.some(p=>partStatus(p)==="bad")?"bad": n?"warn":"safe";
+  $("#ring-arc").setAttribute("stroke-dashoffset", (194.8*(1-score/100)).toFixed(1));
+  $("#ring-arc").setAttribute("stroke", sc==="bad"?"var(--bad)":sc==="warn"?"var(--warn)":"var(--safe)");
+  $("#ring-t").textContent = score;
+  $("#score-t").textContent = L(sc==="bad"?"scoreBad":sc==="warn"?"scoreSoon":"scoreGood");
+  $("#score-p").textContent = L("needAttn")(n);
+  const sys=$("#sys");
+  sys.innerHTML = `<div><span>Power source</span><b>${ME.power==="Solar"?"Solar + battery":"Grid (24 V)"}</b></div>
+    <div><span>Battery</span><b>${Math.round(ME.battery)}%</b></div>
+    <div><span>Network</span><b>${ME.net}, ${"▮".repeat(ME.signal)}${"▯".repeat(5-ME.signal)}</b></div>
+    <div><span>Last sync</span><b>${ago(ME.last)}</b></div>
+    <div><span>Valve</span><b>${waterStatus(ME)==="bad"?"Re-treat loop":"To clean tank"}</b></div>
+    <div><span>Firmware</span><b>v1.4.2</b></div>`;
+}
+let aFilter="all";
+const ICONS = {
+  water:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2.7c4 5 7 8.8 7 12.3a7 7 0 0 1-14 0c0-3.5 3-7.3 7-12.3z"/></svg>',
+  device:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v3M12 20v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M1 12h3M20 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>',
+  msg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'
+};
+function renderAlerts(){
+  const box=$("#alist"); if(!box) return; box.innerHTML="";
+  const list = alertsOf(ME).filter(a=>aFilter==="all"||a.cat===aFilter);
+  if(!list.length){ box.appendChild(el("p","empty",esc(L("noAlerts")))); return; }
+  list.forEach(a=>{
+    const d=el("div","alert"+(a.read?"":" unread")); d.dataset.s=a.s;
+    d.innerHTML=`<div class="ic" aria-hidden="true">${ICONS[a.cat]||ICONS.msg}</div><div><b>${esc(a.title)}</b><p>${esc(a.body)}</p><time>${fmtTime(a.t)}${a.via?" – via "+esc(a.via):""}</time></div>`;
+    box.appendChild(d);
+  });
+}
+function renderBadge(){ const n=alertsOf(ME).filter(a=>!a.read).length; const b=$("#badge"); b.hidden=!n; b.textContent=n; }
+function renderTickets(){
+  const box=$("#tickets"); box.innerHTML="";
+  const mine = tickets.filter(t=>t.unit===ME.id);
+  if(!mine.length){ box.appendChild(el("p","empty",esc(L("noTickets")))); return; }
+  mine.forEach(t=>{
+    const s = t.state==="resolved"?"safe":t.state==="scheduled"?"msg":"warn";
+    const d=el("div","ticket");
+    d.innerHTML=`<div class="t1"><b>${esc(t.type)}</b><span class="chip" data-s="${s==="msg"?"safe":s}">${esc(L(t.state))}</span></div><p>${esc(t.msg||"No details")}${t.visit?" – visit requested":""}</p><p style="font-size:12px">${fmtTime(t.t)}</p>`;
+    box.appendChild(d);
+  });
+}
+function applyLang(){
+  document.documentElement.lang = lang==="hi"?"hi":"en";
+  $$("[data-i18n]").forEach(e=>{ const v=L(e.dataset.i18n); if(typeof v==="string") e.textContent=v; });
+  $("#lang").textContent = lang==="en" ? "हिं" : "EN";
+  $("#lang").setAttribute("aria-label", lang==="en"?"हिंदी में बदलें":"Switch to English");
+  renderCustomer();
+}
+function renderWho(){
+  $("#c-name").textContent = ME.cust;
+  $("#c-unit").textContent = `${ME.id}, ${ME.village}, ${ME.dist}${ME.site!=="Home"?" – "+ME.site:""}`;
+}
+function renderCustomer(){ renderWho(); renderHero(); renderTiles(); renderDevice(); renderAlerts(); renderBadge(); renderTickets(); }
+
+// customer navigation
+function showScreen(name){
+  $$(".screen").forEach(s=>s.classList.toggle("on", s.id==="s-"+name));
+  $$(".p-nav button").forEach(b=>{ if(b.dataset.s===name) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
+  $("#p-body").scrollTop=0;
+  if(name==="alerts"){ setTimeout(()=>{ alertsOf(ME).forEach(a=>a.read=true); renderBadge(); setTimeout(renderAlerts,1500); },50); }
+}
+$$(".p-nav button").forEach(b=>b.addEventListener("click",()=>showScreen(b.dataset.s)));
+$("#bell").addEventListener("click",()=>showScreen("alerts"));
+$$(".filters button").forEach(b=>b.addEventListener("click",()=>{ aFilter=b.dataset.f; $$(".filters button").forEach(x=>x.setAttribute("aria-pressed", x===b)); renderAlerts(); }));
+$("#lang").addEventListener("click",()=>{ lang = lang==="en"?"hi":"en"; try{localStorage.setItem("aqx-lang",lang);}catch(e){} applyLang(); });
+
+// demo controls
+$("#d-bad").addEventListener("click",()=>{ ME.forced="bad"; ME.r.turb=7.8; ME.r.ph=6.2; ME.r.tds=560; tick(true); });
+$("#d-warn").addEventListener("click",()=>{ ME.forced="warn"; ME.r.turb=2.4; ME.r.ph=7.1; ME.r.tds=140; tick(true); });
+$("#d-ok").addEventListener("click",()=>{ ME.forced=null; ME.r={ph:7.2,tds:118,turb:.35,temp:27.4}; tick(true); });
+
+// help / report
+$("#h-send").addEventListener("click",()=>{
+  const t={id:"REQ-"+(1040+tickets.length), t:Date.now(), unit:ME.id, type:$("#h-type").value, msg:$("#h-msg").value.trim(), visit:$("#h-visit").checked, state:"open"};
+  tickets.unshift(t); renderTickets();
+  pushFeed({s:"msg", text:`${ME.id} – ${ME.cust} reported "${t.type}"${t.visit?" and asked for a visit":""}${t.msg?': "'+t.msg+'"':""}`, unit:ME.id});
+  $("#h-msg").value=""; $("#h-visit").checked=false;
+  toast(L("sent"));
+});
+
+// ---------- SERVICE CENTRE ----------
+let cFilter="all", selected=null;
+function counts(){
+  const c={total:fleet.length, online:0, bad:0, warn:0, off:0, service:0};
+  fleet.forEach(u=>{ const s=waterStatus(u); if(u.online) c.online++; if(s==="bad") c.bad++; if(s==="warn") c.warn++; if(s==="off") c.off++; if(u.parts.some(p=>partStatus(p)!=="safe")) c.service++; });
+  return c;
+}
+function renderKpis(){
+  const c=counts(); const box=$("#kpis");
+  const items=[
+    ["all","Units installed",c.total,""],
+    ["online","Reporting now",c.online,"safe"],
+    ["bad","Unsafe water now",c.bad,"bad"],
+    ["service","Service due",c.service,"warn"],
+    ["off","Offline",c.off,"off"]
+  ];
+  box.innerHTML="";
+  items.forEach(([k,lab,v,s])=>{
+    const b=el("button","kpi"); b.type="button"; b.dataset.s=s; b.setAttribute("aria-pressed", cFilter===k);
+    b.innerHTML=`<b>${v}</b><span>${lab}</span>`;
+    b.addEventListener("click",()=>{ cFilter = (cFilter===k && k!=="all") ? "all" : k; renderCentre(); });
+    box.appendChild(b);
+  });
+  $("#tbl-title").textContent = {all:"All purifiers", online:"Reporting now", bad:"Unsafe water now", service:"Service due", off:"Offline"}[cFilter];
+}
+const distSel=$("#f-dist");
+distSel.innerHTML = '<option value="">All districts</option>' + Object.keys(DISTRICTS).map(d=>`<option>${d}</option>`).join("");
+distSel.addEventListener("change", renderTable);
+$("#q").addEventListener("input", renderTable);
+$("#q").addEventListener("keydown", e=>{ if(e.key!=="Enter") return; e.preventDefault(); const v=e.target.value.trim().toUpperCase().replace(/^REPORT\s+/,""); const u=fleet.find(x=>x.id===v); if(u){ selected=u.id; renderTable(); renderDetail(true); openReport(u,"centre"); }});
+
+function statusLabel(s){ return {safe:"Safe",warn:"Attention",bad:"Unsafe",off:"Offline"}[s]; }
+function renderTable(){
+  const q=$("#q").value.trim().toLowerCase(), d=distSel.value;
+  const rows = fleet.filter(u=>{
+    const s=waterStatus(u);
+    if(cFilter==="online" && !u.online) return false;
+    if(cFilter==="bad" && s!=="bad") return false;
+    if(cFilter==="off" && s!=="off") return false;
+    if(cFilter==="service" && !u.parts.some(p=>partStatus(p)!=="safe")) return false;
+    if(d && u.dist!==d) return false;
+    if(q && !(u.id+" "+u.village+" "+u.cust+" "+u.dist+" "+u.site).toLowerCase().includes(q)) return false;
+    return true;
+  }).sort((a,b)=>{ const o={bad:0,off:1,warn:2,safe:3}; return o[waterStatus(a)]-o[waterStatus(b)] || weakest(a).life-weakest(b).life; });
+  const tb=$("#tbody"); tb.innerHTML="";
+  $("#tbl-empty").hidden = rows.length>0;
+  rows.forEach(u=>{
+    const s=waterStatus(u), w=weakest(u), ws=partStatus(w);
+    const tr=el("tr"); tr.tabIndex=0; tr.setAttribute("aria-selected", selected===u.id);
+    const cell=(k)=>{ if(!u.online) return '<span style="color:var(--ink-3)">–</span>'; const ps=PARAMS[k].status(u.r[k]); const c=ps==="bad"?"var(--bad)":ps==="warn"?"var(--warn)":"inherit"; return `<span style="color:${c};font-weight:${ps==="safe"?400:600}">${PARAMS[k].fmt(u.r[k])}</span>`; };
+    tr.innerHTML=`<td><span class="id">${u.id}</span>${u===ME?'<span class="you">in app</span>':""}<div class="loc">${esc(u.village)}, ${esc(u.dist)} – ${esc(u.site)}</div></td>
+      <td><span class="chip" data-s="${s}">${statusLabel(s)}</span></td>
+      <td>${cell("ph")}</td><td>${cell("tds")}</td><td>${cell("turb")}</td>
+      <td class="wp"><span class="minibar" data-s="${ws}"><i style="width:${w.life}%"></i></span>${esc({pre:"Pre-filter",ro:"RO",carb:"Carbon",uv:"UV lamp",pump:"Pump",sens:"Calibration"}[w.k])} ${w.life}%</td>
+      <td>${u.power}${u.power==="Solar"?" "+Math.round(u.battery)+"%":""}</td>
+      <td>${ago(u.last)}</td>`;
+    const open=()=>{ selected=u.id; renderTable(); renderDetail(true); };
+    tr.addEventListener("click",open);
+    tr.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); open(); }});
+    tb.appendChild(tr);
+  });
+}
+function renderDist(){
+  const box=$("#dist"); box.innerHTML="";
+  Object.keys(DISTRICTS).forEach(d=>{
+    const us=fleet.filter(u=>u.dist===d); const c={safe:0,warn:0,bad:0,off:0}; us.forEach(u=>c[waterStatus(u)]++);
+    const r=el("div","r");
+    r.innerHTML=`<span>${d}</span><div class="stack" role="img" aria-label="${d}: ${c.safe} safe, ${c.warn} attention, ${c.bad} unsafe, ${c.off} offline">${["safe","warn","bad","off"].map(k=>c[k]?`<i style="width:${c[k]/us.length*100}%;background:var(--${k})"></i>`:"").join("")}</div><b style="font-weight:600;text-align:right">${us.length}</b>`;
+    box.appendChild(r);
+  });
+}
+function renderFeed(){
+  const box=$("#feed"); if(!box) return; box.innerHTML="";
+  feed.slice(0,40).forEach(f=>{
+    const d=el("div","f"); d.dataset.s=f.s;
+    d.innerHTML=`<i aria-hidden="true"></i><div>${esc(f.text)}<time>${fmtTime(f.t)}</time></div>`;
+    if(f.unit){ d.style.cursor="pointer"; d.addEventListener("click",()=>{ selected=f.unit; renderTable(); renderDetail(true); }); }
+    box.appendChild(d);
+  });
+}
+const TEMPLATES = [
+  ["filter","Filter replacement due", u=>{ const w=weakest(u); return `Namaste ${u.cust.split(" ")[0]}, your ${w.n.toLowerCase()} has ${w.life}% life left. Our technician will replace it within 3 days. – Aquanex`; }],
+  ["unsafe","Unsafe water – do not drink", u=>`Namaste ${u.cust.split(" ")[0]}, your purifier found unsafe water and stopped it from reaching the tank. Please drink stored or boiled water until the light turns green. A technician is on the way. – Aquanex`],
+  ["visit","Technician visit scheduled", u=>`Namaste ${u.cust.split(" ")[0]}, a technician will visit ${u.village} tomorrow between 10 am and 1 pm for routine service. – Aquanex`],
+  ["offline","Purifier not reporting", u=>`Namaste ${u.cust.split(" ")[0]}, we have not received readings from your purifier since ${fmtTime(u.last)}. Please check that it is switched on. – Aquanex`],
+  ["retreat","Water being re-treated", u=>`Namaste ${u.cust.split(" ")[0]}, your purifier found a reading near the limit and is re-treating the water automatically. Water in the clean tank is safe to use. We are watching the readings closely. – Aquanex`],
+  ["ok","Issue resolved", u=>`Namaste ${u.cust.split(" ")[0]}, the problem with your purifier has been fixed and water readings are normal again. – Aquanex`],
+  ["custom","Write your own", u=>""]
+];
+$("#n-tpl").innerHTML = TEMPLATES.map(t=>`<option value="${t[0]}">${t[1]}</option>`).join("");
+$("#n-tpl").addEventListener("change",()=>{ const u=fleet.find(x=>x.id===selected); if(u) $("#n-msg").value = TEMPLATES.find(t=>t[0]===$("#n-tpl").value)[2](u); });
+
+function suggestTpl(u){ const s=waterStatus(u); if(s==="off") return "offline"; if(s==="bad") return "unsafe"; if(u.parts.some(p=>partStatus(p)!=="safe")) return "filter"; if(s==="warn") return "retreat"; return "visit"; }
+function renderDetail(fresh){
+  const box=$("#detail"); const u=fleet.find(x=>x.id===selected);
+  if(!u){ box.hidden=true; return; }
+  box.hidden=false;
+  const s=waterStatus(u);
+  $("#d-id").textContent = u.id + (u===ME?" (shown in customer app)":"");
+  $("#d-open").hidden = (u===ME);
+  $("#d-sub").textContent = `${u.cust}, ${u.site} – ${u.village}, ${u.dist}. ${u.power==="Solar"?"Solar + battery "+Math.round(u.battery)+"%":"Grid power"}, ${u.net}. Last report ${ago(u.last)}${ago(u.last)===L("justNow")?"":" ago"}.`;
+  const chip=$("#d-chip"); chip.dataset.s=s; chip.textContent=statusLabel(s);
+  $("#d-read").innerHTML = ["ph","tds","turb","temp"].map(k=>{ const P=PARAMS[k]; const ps=P.status(u.r[k]); return `<div class="rd"><span>${T.en[k]} <small style="color:var(--ink-3)">(${P.lim})</small></span><b data-s="${u.online?ps:""}">${u.online?P.fmt(u.r[k])+" "+P.unit:"–"}</b></div>`; }).join("")
+     + `<div class="rd"><span>Purified today</span><b>${u.litres} L</b></div><div class="rd"><span>Clean tank</span><b>${u.tank}%</b></div>`;
+  $("#d-parts").innerHTML = u.parts.map(p=>{ const ps=partStatus(p); return `<div class="rd"><span>${p.n}</span><b data-s="${ps}">${p.life}%</b></div>`; }).join("");
+  if(fresh){
+    $("#n-tpl").value = suggestTpl(u);
+    $("#n-msg").value = TEMPLATES.find(t=>t[0]===$("#n-tpl").value)[2](u);
+    box.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth", block:"nearest"});
+  }
+}
+$("#d-close").addEventListener("click",()=>{ selected=null; renderTable(); renderDetail(); });
+function sendToCustomer(u, title, body, cat, s){
+  const via=[ $("#n-app").checked?"app":null, $("#n-sms").checked?"SMS":null ].filter(Boolean).join(" + ");
+  if(!via){ toast("Choose App, SMS or both before sending"); return false; }
+  pushCust({cat, s, title, body, via}, u);
+  pushFeed({s:"msg", text:`Message sent to ${u.cust} (${u.id}) by ${via}: ${title}`, unit:u.id});
+  toast(u===ME ? "Sent – see the customer app" : `Sent to ${u.cust} by ${via} – open them in the customer app to see it`);
+  return true;
+}
+$("#n-send").addEventListener("click",()=>{
+  const u=fleet.find(x=>x.id===selected); if(!u) return;
+  const body=$("#n-msg").value.trim(); if(!body){ toast("Write a message before sending"); return; }
+  const tplName = $("#n-tpl").selectedOptions[0].textContent;
+  sendToCustomer(u, tplName==="Write your own" ? "Message from service centre" : tplName, body, "msg", $("#n-tpl").value==="unsafe"?"bad":"msg");
+});
+$("#n-visit").addEventListener("click",()=>{
+  const u=fleet.find(x=>x.id===selected); if(!u) return;
+  const d=new Date(Date.now()+86400e3).toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"short"});
+  const ok = sendToCustomer(u, "Technician visit scheduled", `A technician will visit on ${d}, 10 am – 1 pm. Please keep the purifier accessible.`, "msg", "msg");
+  if(ok){ tickets.filter(t=>t.state==="open" && t.unit===u.id).forEach(t=>t.state="scheduled"); renderTickets(); }
+});
+
+function renderCentre(){ renderKpis(); renderTable(); renderDist(); renderDetail(); }
+
+// ---------- UNIT REPORT ----------
+const AREA_NOTES = {
+  "Dhanbad":"Coal-mining belt. Watch for high TDS, sulphates, iron and turbidity from mine water; add a lab test for heavy metals every 3 months.",
+  "Bokaro":"Coal mining and steel industry. Watch for TDS, iron and industrial discharge; add a lab test for heavy metals every 3 months.",
+  "Ramgarh":"Coal-mining area. Watch for turbidity, iron and sulphates after rains; add a lab test for heavy metals every 3 months.",
+  "East Singhbhum":"Copper and uranium mining belt. Sensors cannot detect metals or radioactivity – send a sample for lab testing of heavy metals and uranium every 3 months.",
+  "West Singhbhum":"Iron-ore mining belt. Watch for iron and turbidity (red water) especially in monsoon; add a lab test for iron and manganese every 3 months.",
+  "Sahebganj":"Arsenic is reported in groundwater in parts of this district. Confirm the arsenic removal stage with a lab test every 3 months."
+};
+let repUnit=null, repMode="centre";
+const fmtDate = t => new Date(t).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+const fmtStamp = t => new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
+function stats(a){ const mn=Math.min(...a), mx=Math.max(...a), av=a.reduce((x,y)=>x+y,0)/a.length; return {mn,mx,av}; }
+function partForecast(u,p){
+  const perDay = Math.max(u.litres, 30);
+  if(p.days) return {left:Math.round(p.cap*p.life/100)+" days", days:Math.round(p.cap*p.life/100)};
+  if(p.hours){ const h=Math.round(p.cap*p.life/100); return {left:h.toLocaleString("en-IN")+" h", days:Math.round(h/12)}; }
+  const l=Math.round(p.cap*p.life/100); return {left:l.toLocaleString("en-IN")+" L", days:Math.round(l/perDay)};
+}
+function recommendations(u){
+  const r=[], s=waterStatus(u);
+  if(s==="off") r.push(`Unit has not reported since ${fmtStamp(u.last)}. Call ${u.cust} to check power and switch; if no response in 24 h, send a technician.`);
+  if(u.online){
+    if(PARAMS.turb.status(u.r.turb)!=="safe") r.push(`Turbidity is ${u.r.turb.toFixed(2)} NTU (limit 1 NTU). Check and clean the sediment pre-filter; inspect the source for mud or runoff.`);
+    if(PARAMS.ph.status(u.r.ph)!=="safe") r.push(`pH is ${u.r.ph.toFixed(1)} (limit 6.5–8.5). Check the pH-correction stage and dosing; possible acid mine drainage at the source.`);
+    if(PARAMS.tds.status(u.r.tds)!=="safe") r.push(`TDS is ${Math.round(u.r.tds)} mg/L (limit 500). Check the RO membrane and its pressure; plan membrane replacement if TDS keeps rising.`);
+    if(s==="bad") r.push(`Tell the customer not to drink the water until readings are green (send the "Unsafe water" message).`);
+  }
+  u.parts.forEach(p=>{ const ps=partStatus(p), f=partForecast(u,p);
+    if(ps==="bad") r.push(`Replace the ${p.n.toLowerCase()} now (${p.life}% left).`);
+    else if(ps==="warn") r.push(`Plan ${p.n.toLowerCase()} replacement within about ${Math.max(1,f.days)} days (${p.life}% left).`);
+  });
+  if(u.power==="Solar" && u.battery<35) r.push(`Battery is at ${Math.round(u.battery)}%. Clean the solar panel and check the charge controller.`);
+  if(u.online && u.signal<=2) r.push(`Weak ${u.net} signal. Consider moving the antenna or switching to offline logging with daily sync.`);
+  if(!r.length) r.push("No action needed. Next routine service as scheduled.");
+  return r;
+}
+function trendSvg(arr,s){
+  const col = s==="bad"?"var(--bad)":s==="warn"?"var(--warn)":"var(--deep-2)";
+  return `<svg class="tr" viewBox="0 0 150 28" preserveAspectRatio="none" aria-hidden="true"><path d="${sparkPath(arr)}" fill="none" stroke="${col}" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;
+}
+function buildReport(u, mode){
+  const s=waterStatus(u);
+  const score=Math.round(u.parts.reduce((a,p)=>a+p.life,0)/u.parts.length);
+  const due=u.parts.filter(p=>partStatus(p)!=="safe").length;
+  const hs = u.parts.some(p=>partStatus(p)==="bad")?"bad":due?"warn":"safe";
+  const wTxt={safe:"Safe to drink",warn:"Needs attention",bad:"Unsafe – blocked",off:"No data (offline)"}[s];
+  const rows = ["ph","tds","turb","temp"].map(k=>{
+    const P=PARAMS[k], st=stats(u.hist[k]), ps=u.online?P.status(u.r[k]):"off";
+    return `<tr><td>${T.en[k]}</td><td class="s-${ps}">${u.online?P.fmt(u.r[k])+" "+P.unit:"–"}</td><td>${P.fmt(st.mn)} / ${P.fmt(st.av)} / ${P.fmt(st.mx)}</td><td>${P.lim}</td><td>${trendSvg(u.hist[k],ps)}</td><td class="s-${ps}">${{safe:"OK",warn:"Near limit",bad:"Out of limit",off:"–"}[ps]}</td></tr>`;
+  }).join("");
+  const parts = u.parts.map(p=>{ const ps=partStatus(p), f=partForecast(u,p);
+    return `<tr><td>${p.n}</td><td><span class="minibar" data-s="${ps}"><i style="width:${p.life}%"></i></span>${p.life}%</td><td>${f.left}</td><td>${f.days<=0?"now":"≈ "+f.days+" days"}</td><td class="s-${ps}">${ps==="bad"?"Replace now":ps==="warn"?"Plan replacement":"Good"}</td></tr>`; }).join("");
+  const ev = u.log.slice(0,10).map(e=>`<div class="ev"><time>${fmtTime(e.t)}</time><span>${esc(e.text)}</span></div>`).join("") || '<p class="empty" style="padding:10px">No events recorded.</p>';
+  const tk = tickets.filter(t=>t.unit===u.id);
+  const tkHtml = tk.length ? tk.map(t=>`<div class="ev"><time>${fmtTime(t.t)}</time><span><b>${esc(t.type)}</b> – ${esc(t.msg||"no details")}${t.visit?" (visit requested)":""} – <i>${esc(T.en[t.state])}</i></span></div>`).join("") : '<p style="font-size:13.5px;color:var(--ink-2)">No open customer requests.</p>';
+  const recs = recommendations(u).map(x=>`<li>${esc(x)}</li>`).join("");
+  return `<article class="rep">
+    <header>
+      <div><h2>Unit report – ${u.id}</h2><p>${esc(u.cust)}, ${esc(u.site)} – ${esc(u.village)}, ${esc(u.dist)}, Jharkhand</p></div>
+      <div class="when">Generated ${fmtStamp(Date.now())}<br>Installed ${fmtDate(u.installed)}<br>Last service ${fmtDate(u.lastService)}</div>
+    </header>
+    <div class="verdict">
+      <div data-s="${s}"><span>Water quality</span><b>${wTxt}</b><small>${u.online?"Valve: "+(s==="bad"?"re-treat loop":"to clean tank"):"Last report "+fmtStamp(u.last)}</small></div>
+      <div data-s="${hs}"><span>Equipment health</span><b>${score} / 100</b><small>${due?due+" part"+(due>1?"s":"")+" due":"All parts good"}</small></div>
+      <div data-s="${u.online?"safe":"off"}"><span>Connection</span><b>${u.online?"Reporting":"Offline"}</b><small>${u.net}, signal ${u.signal}/5, ${u.power==="Solar"?"solar + battery "+Math.round(u.battery)+"%":"grid power"}</small></div>
+    </div>
+    <h3>Water quality – treated water</h3>
+    <div class="tw"><table><thead><tr><th>Parameter</th><th>Now</th><th>Min / avg / max (last 24 readings)</th><th>BIS IS 10500 limit</th><th>Trend</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <h3>Equipment diagnostics</h3>
+    <div class="tw"><table><thead><tr><th>Part</th><th>Life left</th><th>Remaining</th><th>Replace in</th><th>Status</th></tr></thead><tbody>${parts}</tbody></table></div>
+    <h3>Usage and system</h3>
+    <div class="grid2">
+      <div><span>Purified today</span>${u.litres} L</div>
+      <div><span>Clean tank level</span>${u.tank}%</div>
+      <div><span>Reject water reused (est.)</span>${Math.round(u.litres*.6)} L</div>
+      <div><span>Firmware</span>v1.4.2</div>
+    </div>
+    <h3>Recommended actions</h3>
+    <ol>${recs}</ol>
+    <h3>Area note – ${esc(u.dist)}</h3>
+    <p class="note">${esc(AREA_NOTES[u.dist]||"")}</p>
+    <h3>Recent events</h3>
+    ${ev}
+    <h3>Customer requests</h3>
+    ${tkHtml}
+    <p class="foot">Aquanex smart water purification and monitoring system. ${mode==="centre"?"Service centre copy.":"Customer copy."} Sensor readings are indicative; heavy metals and microbes need laboratory confirmation. Prototype – simulated data.</p>
+  </article>`;
+}
+let lastFocus=null;
+function openReport(u, mode){
+  repUnit=u; repMode=mode; lastFocus=document.activeElement;
+  $("#sheet-title").textContent = `Unit report – ${u.id}`;
+  $("#r-send").hidden = mode!=="centre";
+  $("#rep-body").innerHTML = buildReport(u, mode);
+  $("#modal").hidden=false; $("#modal").scrollTop=0;
+  setTimeout(()=>$("#r-close").focus(),0);
+}
+function closeReport(){ $("#modal").hidden=true; repUnit=null; if(lastFocus) lastFocus.focus(); }
+$("#r-close").addEventListener("click", closeReport);
+$("#modal").addEventListener("click", e=>{ if(e.target.id==="modal") closeReport(); });
+document.addEventListener("keydown", e=>{ if(e.key==="Escape" && !$("#modal").hidden) closeReport(); });
+$("#r-refresh").addEventListener("click", ()=>{ if(repUnit){ $("#rep-body").innerHTML = buildReport(repUnit, repMode); toast("Report refreshed with latest readings"); }});
+$("#r-send").addEventListener("click", ()=>{
+  const u=repUnit; if(!u) return;
+  const s=waterStatus(u), score=Math.round(u.parts.reduce((a,p)=>a+p.life,0)/u.parts.length);
+  const body = `Namaste ${u.cust.split(" ")[0]}, your purifier report for ${fmtDate(Date.now())}: water ${ {safe:"safe to drink",warn:"needs attention",bad:"unsafe – do not drink",off:"no data (unit offline)"}[s] }, equipment health ${score}/100. ${recommendations(u)[0]} – Aquanex`;
+  pushCust({cat:"msg", s:s==="bad"?"bad":"msg", title:"Your purifier report", body, via:"app + SMS"}, u);
+  pushFeed({s:"msg", text:`Report summary sent to ${u.cust} (${u.id}) by app + SMS`, unit:u.id});
+  toast(u===ME ? "Sent – see the customer app" : `Report summary sent to ${u.cust}`);
+});
+$("#d-report").addEventListener("click", ()=>{ const u=fleet.find(x=>x.id===selected); if(u) openReport(u,"centre"); });
+$("#my-report").addEventListener("click", ()=>openReport(ME,"customer"));
+
+// download (only when the viewer supports it)
+let dlApi=null;
+if(window.claude && typeof window.claude.use==="function"){
+  window.claude.use("downloads").then(d=>{ if(d){ dlApi=d; $("#r-dl").hidden=false; } }).catch(()=>{});
+}
+$("#r-dl").addEventListener("click", async ()=>{
+  if(!dlApi||!repUnit) return;
+  const css = Array.from(document.querySelectorAll("style")).map(x=>x.textContent).join("\n");
+  const doc = `<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Aquanex unit report ${repUnit.id}</title><style>${css}\nbody{background:#fff}.rep{max-width:880px;margin:0 auto}@media print{.rep{padding:0}}</style></head><body>${buildReport(repUnit, repMode)}</body></html>`;
+  try{ await dlApi.save({filename:`Aquanex-report-${repUnit.id}-${new Date().toISOString().slice(0,10)}.html`, data:doc}); toast("Report saved – open it and print to PDF if needed"); }
+  catch(e){ if(e && (e.code==="unavailable"||e.code==="not_granted"||e.code==="capability_disabled"||e.code==="capability_removed")) $("#r-dl").hidden=true; else if(e && e.code==="rate_limited") toast("A save prompt is already open"); }
+});
+
+// ---------- switch customer ----------
+function seedAlerts(u){
+  if(alertsBy[u.id]) return;
+  const a=alertsOf(u), t0=Date.now();
+  a.push({t:u.lastService, read:true, cat:"msg", s:"msg", title:"Service centre", body:`Routine service done on ${new Date(u.lastService).toLocaleDateString("en-IN",{day:"numeric",month:"short"})}. Sensors checked and calibrated.`});
+  u.parts.filter(p=>partStatus(p)!=="safe").forEach(p=>a.unshift({t:t0-3600e3*(1+Math.floor(Math.random()*20)), read:false, cat:"device", s:partStatus(p), title:`${p.n} at ${p.life}%`, body: partStatus(p)==="bad" ? `The ${p.n.toLowerCase()} needs replacing now. A technician will be sent.` : `The ${p.n.toLowerCase()} will need replacing soon. The service centre will contact you.`}));
+  const ws=waterStatus(u);
+  if(ws==="bad") a.unshift({t:t0-600e3, read:false, cat:"water", s:"bad", title:"Do not drink the water", body:`Readings are outside safe limits (turbidity ${u.r.turb.toFixed(1)} NTU, pH ${u.r.ph.toFixed(1)}). The purifier is re-treating the water.`, via:"app + SMS"});
+  if(ws==="warn") a.unshift({t:t0-900e3, read:false, cat:"water", s:"warn", title:"A reading is near the limit", body:"The purifier is re-treating the water automatically. Water in the clean tank is safe to use.", via:"app"});
+  if(ws==="off") a.unshift({t:u.last, read:false, cat:"device", s:"warn", title:"Purifier not reporting", body:"Your purifier has stopped sending readings. Please check that it is switched on."});
+}
+function switchCustomer(u){
+  if(!u || u===ME) { closePick(); return; }
+  ME.forced=null;
+  ME=u; seedAlerts(u); lastMeStatus=waterStatus(u);
+  closePick();
+  showScreen("water");
+  renderCustomer(); renderCentre();
+  if(window.matchMedia("(max-width:900px)").matches){ $("#stage").dataset.view="customer"; $$(".seg button").forEach(x=>x.setAttribute("aria-pressed", x.dataset.view==="customer")); }
+  toast(`Customer app now showing ${u.cust} (${u.id})`);
+}
+function renderPick(){
+  const q=$("#pick-q").value.trim().toLowerCase(), box=$("#pick-list"); box.innerHTML="";
+  fleet.filter(u=>!q || (u.cust+" "+u.id+" "+u.village+" "+u.dist+" "+u.site).toLowerCase().includes(q)).forEach(u=>{
+    const s=waterStatus(u), b=el("button","opt"); b.type="button"; b.setAttribute("aria-current", u===ME);
+    b.innerHTML=`<div><b>${esc(u.cust)}</b><span class="l">${u.id} – ${esc(u.site)}, ${esc(u.village)}, ${esc(u.dist)}</span></div><span class="chip" data-s="${s}">${statusLabel(s)}</span>`;
+    b.addEventListener("click",()=>switchCustomer(u));
+    box.appendChild(b);
+  });
+  if(!box.children.length) box.appendChild(el("p","empty","No customer matches. Try a unit ID like AQX-0164."));
+}
+let pickFocus=null;
+function openPick(){ pickFocus=document.activeElement; $("#pick-q").value=""; renderPick(); $("#pick").hidden=false; setTimeout(()=>$("#pick-q").focus(),0); }
+function closePick(){ if($("#pick").hidden) return; $("#pick").hidden=true; if(pickFocus && document.body.contains(pickFocus)) pickFocus.focus(); }
+$("#who-btn").addEventListener("click", openPick);
+$("#d-switch").addEventListener("click", openPick);
+$("#pick-close").addEventListener("click", closePick);
+$("#pick").addEventListener("click", e=>{ if(e.target.id==="pick") closePick(); });
+$("#pick-q").addEventListener("input", renderPick);
+$("#pick-q").addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); const f=$("#pick-list .opt"); if(f) f.click(); } });
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") closePick(); });
+$("#d-open").addEventListener("click", ()=>{ const u=fleet.find(x=>x.id===selected); if(u) switchCustomer(u); });
+
+// ---------- simulation loop ----------
+function drift(u){
+  if(!u.online){ if(rnd()<.01){ u.online=true; u.last=Date.now(); pushFeed({s:"safe", text:`${u.id} (${u.village}) is reporting again`, unit:u.id}); } return; }
+  if(rnd()<.004 && u!==ME){ u.online=false; pushFeed({s:"warn", text:`${u.id} (${u.village}) stopped reporting`, unit:u.id}); return; }
+  const r=u.r;
+  if(!(u===ME && u.forced)){
+    r.ph   = clamp(r.ph + (rnd()-.5)*.06 + (7.15-r.ph)*.03, 5.8, 9);
+    r.tds  = clamp(r.tds + (rnd()-.5)*6, 40, 800);
+    r.turb = clamp(r.turb + (rnd()-.5)*.06 + (u.r.turb>1.2? -.01: .0), .05, 12);
+  } else {
+    r.ph += (rnd()-.5)*.03; r.tds += (rnd()-.5)*4; r.turb = Math.max(.05, r.turb+(rnd()-.5)*.15);
+  }
+  r.temp = clamp(r.temp + (rnd()-.5)*.15, 15, 38);
+  for(const k in u.hist){ u.hist[k].push(r[k]); if(u.hist[k].length>24) u.hist[k].shift(); }
+  if(rnd()<.3){ u.litres += 1; u.tank = clamp(u.tank + (rnd()<.5?2:-2), 15, 100); }
+  if(u.power==="Solar") u.battery = clamp(u.battery + (rnd()-.45), 20, 100);
+  if(rnd()<.02){ const p=pick(u.parts); p.life=Math.max(1,p.life-1); }
+  u.last = Date.now();
+}
+function tick(immediate){
+  fleet.forEach(drift);
+  // status change on the demo unit -> alert both sides
+  const s = waterStatus(ME);
+  if(s!==lastMeStatus){
+    if(s==="bad"){
+      pushCust({cat:"water", s:"bad", title: lang==="hi"?"पानी न पिएँ":"Do not drink the water", body: lang==="hi"?"गंदलापन और pH सीमा से बाहर हैं। पानी दोबारा साफ़ किया जा रहा है।":`Turbidity ${ME.r.turb.toFixed(1)} NTU and pH ${ME.r.ph.toFixed(1)} are outside safe limits. The purifier is re-treating the water.`, via:"app + SMS"});
+      pushFeed({s:"bad", text:`${ME.id} (${ME.village}) – unsafe water blocked (turbidity ${ME.r.turb.toFixed(1)} NTU, pH ${ME.r.ph.toFixed(1)}). Customer alerted automatically.`, unit:ME.id});
+    } else if(s==="warn"){
+      pushCust({cat:"water", s:"warn", title: lang==="hi"?"गंदलापन बढ़ा":"Turbidity is rising", body: lang==="hi"?"पानी दोबारा साफ़ हो रहा है।":`Turbidity is ${ME.r.turb.toFixed(1)} NTU (limit 1 NTU). The purifier is re-treating the water.`, via:"app"});
+      pushFeed({s:"warn", text:`${ME.id} (${ME.village}) – turbidity ${ME.r.turb.toFixed(1)} NTU, re-treating`, unit:ME.id});
+    } else if(s==="safe"){
+      pushCust({cat:"water", s:"safe", title: lang==="hi"?"पानी फिर से सुरक्षित":"Water is safe again", body: lang==="hi"?"सभी जाँच सामान्य हैं।":"All four readings are back within limits.", via:"app"});
+      pushFeed({s:"safe", text:`${ME.id} (${ME.village}) – water back within limits`, unit:ME.id});
+    }
+    lastMeStatus=s;
+  }
+  // occasional fleet event for realism
+  if(rnd()<.05){
+    const u=pick(fleet.filter(x=>x!==ME && x.online));
+    if(u){ const was=waterStatus(u); u.r.turb = rnd()<.5 ? 1.4+rnd()*2 : .3; const now=waterStatus(u); if(now!==was) pushFeed({s:now==="safe"?"safe":"warn", text:`${u.id} (${u.village}) – ${now==="safe"?"water back within limits":"turbidity "+u.r.turb.toFixed(1)+" NTU, re-treating"}`, unit:u.id}); }
+  }
+  renderCustomer();
+  renderCentre();
+  $("#clock").textContent = "Live – updated " + new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",second:"2-digit"});
+}
+
+// view toggle (small screens)
+$$(".seg button").forEach(b=>b.addEventListener("click",()=>{
+  $("#stage").dataset.view=b.dataset.view;
+  $$(".seg button").forEach(x=>x.setAttribute("aria-pressed", x===b));
+}));
+
+applyLang();
+renderCentre();
+renderFeed();
+tick();
+setInterval(tick, 3000);
+})();
+</script>
+</body>
+</html>
